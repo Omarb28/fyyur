@@ -1,17 +1,17 @@
-
 # credit to: https://chartio.com/resources/tutorials/how-to-execute-raw-sql-in-sqlalchemy/
 # for showing how to seed data into sqlalchemy
 
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from config import SQLALCHEMY_DATABASE_URI
+from app import Venue, Artist, Genre, db
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
 #  Reset Tables
 #  ----------------------------------------------------------------
 
-tables = ["Show", "Venue", "Artist"]
+tables = ["VenueGenre", "ArtistGenre", "Show", "Venue", "Artist", "Genre"]
 
 with engine.connect() as con:
   for table in tables:
@@ -66,4 +66,67 @@ statement = text("""INSERT INTO "Show" (id, venue_id, artist_id, start_time)
 with engine.connect() as con:
   for line in data:
     con.execute(statement, **line)
+
+#  Genres
+#  ----------------------------------------------------------------
+
+data = (
+  { "genre": "Alternative" },
+  { "genre": "Blues" },
+  { "genre": "Classical" },
+  { "genre": "Country" },
+  { "genre": "Electronic" },
+  { "genre": "Folk" },
+  { "genre": "Funk" },
+  { "genre": "Hip-Hop" },
+  { "genre": "Heavy Metal" },
+  { "genre": "Instrumental" },
+  { "genre": "Jazz" },
+  { "genre": "Musical Theatre" },
+  { "genre": "Pop" },
+  { "genre": "Punk" },
+  { "genre": "R&B" },
+  { "genre": "Reggae" },
+  { "genre": "Rock n Roll" },
+  { "genre": "Soul" },
+  { "genre": "Swing" },
+  { "genre": "Other" }
+)
+
+statement = text("""INSERT INTO "Genre" (genre) 
+                      VALUES (:genre);""")
+                      
+with engine.connect() as con:
+  for line in data:
+    con.execute(statement, **line)
+
+#  Genre Association Tables
+#  ----------------------------------------------------------------
+
+db_genres = Genre.query.all()
+genre_dictionary = {}
+
+for g in db_genres:
+  genre_dictionary[g.genre] = g
+
+def get_genre_list(genre_str_list):
+  genre_list = []
+  for genre_str in genre_str_list:
+    genre = genre_dictionary[genre_str]
+    genre_list.append(genre)
+  return genre_list
+
+venues = Venue.query.all()
+
+venues[0].genres = get_genre_list(["Jazz", "Reggae", "Swing", "Classical", "Folk"])
+venues[1].genres = get_genre_list(["Classical", "R&B", "Hip-Hop"])
+venues[2].genres = get_genre_list(["Rock n Roll", "Jazz", "Classical", "Folk"])
+
+artists = Artist.query.all()
+
+artists[0].genres = get_genre_list(["Rock n Roll"])
+artists[1].genres = get_genre_list(["Jazz"])
+artists[2].genres = get_genre_list(["Jazz", "Classical"])
+
+db.session.commit()
 
