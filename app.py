@@ -5,6 +5,7 @@
 import os
 import json
 import dateutil.parser
+from datetime import datetime
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
@@ -29,6 +30,29 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
+
+#  Association Tables
+#  ----------------------------------------------------------------
+
+shows = db.Table('Show',
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
+    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
+    db.Column('start_time', db.DateTime, default=datetime.utcnow, nullable=False)
+)
+'''
+venue_genres = db.Table('VenueGenre',
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
+    db.Column('genre', db.String(120), db.ForeignKey('Genre.genre'), primary_key=True)
+)
+
+artist_genres = db.Table('ArtistGenre',
+    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
+    db.Column('genre', db.String(120), db.ForeignKey('Genre.genre'), primary_key=True)
+)
+'''
+#  Models
+#  ----------------------------------------------------------------
+
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
@@ -44,9 +68,9 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
-    
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # TODO maybe change lazy loading to eager loading
+    shows = db.relationship('Artist', secondary=shows, backref=db.backref('venues', lazy=True))
+    #genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues', lazy=True))
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -64,10 +88,11 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
 
+    #genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists', lazy=True))
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+class Genre(db.Model):
+    genre = db.Column(db.String(120), primary_key=True)
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 #----------------------------------------------------------------------------#
 # Filters.
