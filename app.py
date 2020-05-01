@@ -39,7 +39,7 @@ shows = db.Table('Show',
     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
     db.Column('start_time', db.DateTime, default=datetime.utcnow, nullable=False)
 )
-'''
+
 venue_genres = db.Table('VenueGenre',
     db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
     db.Column('genre', db.String(120), db.ForeignKey('Genre.genre'), primary_key=True)
@@ -49,7 +49,7 @@ artist_genres = db.Table('ArtistGenre',
     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
     db.Column('genre', db.String(120), db.ForeignKey('Genre.genre'), primary_key=True)
 )
-'''
+
 #  Models
 #  ----------------------------------------------------------------
 
@@ -68,9 +68,10 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
+
     # TODO maybe change lazy loading to eager loading
     shows = db.relationship('Artist', secondary=shows, backref=db.backref('venues', lazy=True))
-    #genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues', lazy=True))
+    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues', lazy=True))
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -80,7 +81,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    #genres = db.Column(db.String(120)) # removed this to make genre an association table
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
@@ -88,9 +89,11 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
 
-    #genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists', lazy=True))
+    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists', lazy=True))
 
 class Genre(db.Model):
+    __tablename__ = 'Genre'
+
     genre = db.Column(db.String(120), primary_key=True)
 
 
