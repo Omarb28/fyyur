@@ -11,7 +11,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URI)
 #  Reset Tables
 #  ----------------------------------------------------------------
 
-tables = ["Venue", "Artist", "Show"]
+tables = ["Show", "Venue", "Artist"]
 
 with engine.connect() as con:
   for table in tables:
@@ -53,15 +53,15 @@ with engine.connect() as con:
 #  ----------------------------------------------------------------
 
 data = (
-  { "venue_id": 1, "artist_id": 4, "start_time": "2019-05-21T21:30:00.000Z" },
-  { "venue_id": 3, "artist_id": 5, "start_time": "2019-06-15T23:00:00.000Z" },
-  { "venue_id": 3, "artist_id": 6, "start_time": "2035-04-01T20:00:00.000Z" },
-  { "venue_id": 3, "artist_id": 6, "start_time": "2035-04-08T20:00:00.000Z" },
-  { "venue_id": 3, "artist_id": 6, "start_time": "2035-04-15T20:00:00.000Z" }
+  { "id": 1, "venue_id": 1, "artist_id": 4, "start_time": "2019-05-21T21:30:00.000Z" },
+  { "id": 2, "venue_id": 3, "artist_id": 5, "start_time": "2019-06-15T23:00:00.000Z" },
+  { "id": 3, "venue_id": 3, "artist_id": 6, "start_time": "2035-04-01T20:00:00.000Z" },
+  { "id": 4, "venue_id": 3, "artist_id": 6, "start_time": "2035-04-08T20:00:00.000Z" },
+  { "id": 5, "venue_id": 3, "artist_id": 6, "start_time": "2035-04-15T20:00:00.000Z" }
 )
 
-statement = text("""INSERT INTO "Show" (venue_id, artist_id, start_time) 
-                      VALUES (:venue_id, :artist_id, :start_time);""")
+statement = text("""INSERT INTO "Show" (id, venue_id, artist_id, start_time) 
+                      VALUES (:id, :venue_id, :artist_id, :start_time);""")
                       
 with engine.connect() as con:
   for line in data:

@@ -34,9 +34,13 @@ migrate = Migrate(app, db)
 #  Association Tables
 #  ----------------------------------------------------------------
 
+# I gave shows integer primary keys because the same venue can
+# host the same artist at different times, and I don't think putting
+# time as part of a primary key is a good idea
 shows = db.Table('Show',
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id')),
+    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id')),
     db.Column('start_time', db.DateTime, default=datetime.utcnow, nullable=False)
 )
 
