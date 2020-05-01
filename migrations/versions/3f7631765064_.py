@@ -1,4 +1,4 @@
-"""empty message
+"""Created VenueGenre and Artist Genre association tables
 
 Revision ID: 3f7631765064
 Revises: da41e433ed5e
