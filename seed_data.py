@@ -11,14 +11,11 @@ engine = create_engine(SQLALCHEMY_DATABASE_URI)
 #  Reset Tables
 #  ----------------------------------------------------------------
 
-statements = [
-  """DELETE FROM "Venue";""",
-  """DELETE FROM "Artist";"""
-]
+tables = ["Venue", "Artist", "Show"]
 
 with engine.connect() as con:
-  for statement in statements:
-    con.execute(statement)
+  for table in tables:
+    con.execute("""DELETE FROM "%s";""" % table)
 
 #  Venues
 #  ----------------------------------------------------------------
@@ -30,7 +27,7 @@ data = (
 )
 
 statement = text("""INSERT INTO "Venue" (id, name, address, city, state, phone, website, facebook_link, seeking_talent, seeking_description, image_link) 
-                      VALUES (:id, :name, :address, :city, :state, :phone, :website, :facebook_link, :seeking_talent, :seeking_description, :image_link)""")
+                      VALUES (:id, :name, :address, :city, :state, :phone, :website, :facebook_link, :seeking_talent, :seeking_description, :image_link);""")
                       
 with engine.connect() as con:
   for line in data:
@@ -46,7 +43,25 @@ data = (
 )
 
 statement = text("""INSERT INTO "Artist" (id, name, city, state, phone, website, facebook_link, seeking_venue, seeking_description, image_link) 
-                      VALUES (:id, :name, :city, :state, :phone, :website, :facebook_link, :seeking_venue, :seeking_description, :image_link)""")
+                      VALUES (:id, :name, :city, :state, :phone, :website, :facebook_link, :seeking_venue, :seeking_description, :image_link);""")
+                      
+with engine.connect() as con:
+  for line in data:
+    con.execute(statement, **line)
+
+#  Shows
+#  ----------------------------------------------------------------
+
+data = (
+  { "venue_id": 1, "artist_id": 4, "start_time": "2019-05-21T21:30:00.000Z" },
+  { "venue_id": 3, "artist_id": 5, "start_time": "2019-06-15T23:00:00.000Z" },
+  { "venue_id": 3, "artist_id": 6, "start_time": "2035-04-01T20:00:00.000Z" },
+  { "venue_id": 3, "artist_id": 6, "start_time": "2035-04-08T20:00:00.000Z" },
+  { "venue_id": 3, "artist_id": 6, "start_time": "2035-04-15T20:00:00.000Z" }
+)
+
+statement = text("""INSERT INTO "Show" (venue_id, artist_id, start_time) 
+                      VALUES (:venue_id, :artist_id, :start_time);""")
                       
 with engine.connect() as con:
   for line in data:
