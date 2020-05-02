@@ -37,12 +37,6 @@ migrate = Migrate(app, db)
 # I gave shows integer primary keys because the same venue can
 # host the same artist at different times, and I don't think putting
 # time as part of a primary key is a good idea
-shows = db.Table('Show',
-    db.Column('id', db.Integer, primary_key=True),
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id')),
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id')),
-    db.Column('start_time', db.DateTime, default=datetime.utcnow, nullable=False)
-)
 
 venue_genres = db.Table('VenueGenre',
     db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
@@ -74,8 +68,9 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(240))
 
     # TODO maybe change lazy loading to eager loading
-    shows = db.relationship('Artist', secondary=shows, backref=db.backref('venues', lazy=True))
+    shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
     genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues', lazy=True))
+
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -92,13 +87,24 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
 
+    shows = db.relationship('Show', backref=db.backref('artist', lazy=True))
     genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists', lazy=True))
 
+# one-to-many relationship between (Parent->Show) and (Artist->Show)
+class Show(db.Model):
+    __tablename__ = 'Show'
+
+    id = db.Column(db.Integer, primary_key=True)
+    start_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+
+# many-to-many relationship between (Parent-Genre) and (Artist-Genre) with Association Tables included above
 class Genre(db.Model):
     __tablename__ = 'Genre'
 
     genre = db.Column(db.String(120), primary_key=True)
-
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -178,9 +184,9 @@ def venues():
     data_index = cities[v.city]
     data[data_index]['venues'].append(venue_data)
   '''
-  venue = Venue.query.get(3)
-  print(venue.shows)
-  print(shows.c)
+  #venue = Venue.query.get(3)
+  #print(venue.shows)
+  #print(shows.c)
   
   
   return render_template('pages/venues.html', areas=[]);
