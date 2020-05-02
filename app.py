@@ -96,7 +96,7 @@ class Show(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     start_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    
+
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
 
@@ -159,12 +159,15 @@ def venues():
     }]
   }]
   '''
-  #venues = Venue.query.all()
-  '''
+  venues = Venue.query.all()
+  
   # dictionary of unique cities
   # keys are city names and values are the index of the city in the data
   cities = {}
   data = []
+
+  all_past_shows_query = db.session.query(Show).filter(Show.start_time < datetime.utcnow())
+  all_upcoming_shows_query = db.session.query(Show).filter(Show.start_time >= datetime.utcnow())
 
   for v in venues:
     if v.city not in cities.keys():
@@ -176,20 +179,48 @@ def venues():
       }
       data.append(city_data)
 
+    # TODO find a way to select columns by using the ORM instead of looping with python
+
+    # past shows
+    venue_past_shows = all_past_shows_query.filter(Show.venue_id == v.id).all()
+    past_shows_data = []
+
+    for show in venue_past_shows:
+      artist = show.artist
+      show_data = {
+        "artist_id": artist.id,
+        "artist_name": artist.name,
+        "artist_image_link": artist.image_link,
+        "start_time": show.start_time
+      }
+      past_shows_data.append(show_data)
+
+    # upcoming shows
+    venue_upcoming_shows = all_upcoming_shows_query.filter(Show.venue_id == v.id).all()
+    upcoming_shows_data = []
+
+    for show in venue_upcoming_shows:
+      artist = show.artist
+      show_data = {
+        "artist_id": artist.id,
+        "artist_name": artist.name,
+        "artist_image_link": artist.image_link,
+        "start_time": show.start_time
+      }
+      upcoming_shows_data.append(show_data)
+    
     venue_data = {
       "id": v.id,
       "name": v.name,
-      "num_upcoming_shows": 0
+      "past_shows": past_shows_data,
+      "upcoming_shows": upcoming_shows_data,
+      "past_shows_count": len(past_shows_data),
+      "upcoming_shows_count": len(upcoming_shows_data)
     }
     data_index = cities[v.city]
     data[data_index]['venues'].append(venue_data)
-  '''
-  #venue = Venue.query.get(3)
-  #print(venue.shows)
-  #print(shows.c)
   
-  
-  return render_template('pages/venues.html', areas=[]);
+  return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
