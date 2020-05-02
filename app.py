@@ -166,9 +166,6 @@ def venues():
   cities = {}
   data = []
 
-  all_past_shows_query = db.session.query(Show).filter(Show.start_time < datetime.utcnow())
-  all_upcoming_shows_query = db.session.query(Show).filter(Show.start_time >= datetime.utcnow())
-
   for v in venues:
     if v.city not in cities.keys():
       cities[v.city] = len(data) # assign index of city
@@ -181,42 +178,12 @@ def venues():
 
     # TODO find a way to select columns by using the ORM instead of looping with python
 
-    # past shows
-    venue_past_shows = all_past_shows_query.filter(Show.venue_id == v.id).all()
-    past_shows_data = []
-
-    for show in venue_past_shows:
-      artist = show.artist
-      show_data = {
-        "artist_id": artist.id,
-        "artist_name": artist.name,
-        "artist_image_link": artist.image_link,
-        "start_time": show.start_time
-      }
-      past_shows_data.append(show_data)
-
-    # upcoming shows
-    venue_upcoming_shows = all_upcoming_shows_query.filter(Show.venue_id == v.id).all()
-    upcoming_shows_data = []
-
-    for show in venue_upcoming_shows:
-      artist = show.artist
-      show_data = {
-        "artist_id": artist.id,
-        "artist_name": artist.name,
-        "artist_image_link": artist.image_link,
-        "start_time": show.start_time
-      }
-      upcoming_shows_data.append(show_data)
     
     venue_data = {
       "id": v.id,
       "name": v.name,
-      "past_shows": past_shows_data,
-      "upcoming_shows": upcoming_shows_data,
-      "past_shows_count": len(past_shows_data),
-      "upcoming_shows_count": len(upcoming_shows_data)
     }
+    
     data_index = cities[v.city]
     data[data_index]['venues'].append(venue_data)
   
@@ -318,8 +285,67 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
+
+  venue = Venue.query.get(venue_id)
+
+  all_past_shows_query = db.session.query(Show).filter(Show.start_time < datetime.utcnow())
+  all_upcoming_shows_query = db.session.query(Show).filter(Show.start_time >= datetime.utcnow())
+
+  # past shows
+  venue_past_shows = all_past_shows_query.filter(Show.venue_id == venue.id).all()
+  past_shows_data = []
+
+  for show in venue_past_shows:
+    artist = show.artist
+    show_data = {
+      "artist_id": artist.id,
+      "artist_name": artist.name,
+      "artist_image_link": artist.image_link,
+      "start_time": show.start_time.isoformat(sep='T')[:-3] + 'Z' 
+    }
+    # start_time format "2035-04-15T20:00:00.000Z"  .strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    past_shows_data.append(show_data)
+
+  # upcoming shows
+  venue_upcoming_shows = all_upcoming_shows_query.filter(Show.venue_id == venue.id).all()
+  upcoming_shows_data = []
+
+  for show in venue_upcoming_shows:
+    artist = show.artist
+    show_data = {
+      "artist_id": artist.id,
+      "artist_name": artist.name,
+      "artist_image_link": artist.image_link,
+      "start_time": show.start_time.isoformat(sep='T')[:-3] + 'Z' 
+    }
+    upcoming_shows_data.append(show_data)
+  
+  # venue genres
+  genres = []
+  for g in venue.genres:
+    genres.append(g.genre)
+
+  venue_data = {
+    "id": venue.id,
+    "name": venue.name,
+    "genres": genres,
+    "address": venue.address,
+    "city": venue.city,
+    "state": venue.state,
+    "phone": venue.phone,
+    "website": venue.website,
+    "facebook_link": venue.facebook_link,
+    "seeking_talent": venue.seeking_talent,
+    "seeking_description": venue.seeking_description,
+    "image_link": venue.image_link,
+    "past_shows": past_shows_data,
+    "upcoming_shows": upcoming_shows_data,
+    "past_shows_count": len(past_shows_data),
+    "upcoming_shows_count": len(upcoming_shows_data)
+  }
+
   data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=data)
+  return render_template('pages/show_venue.html', venue=venue_data)
 
 #  Create Venue
 #  ----------------------------------------------------------------
