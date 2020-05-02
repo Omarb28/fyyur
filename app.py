@@ -85,7 +85,6 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    #genres = db.Column(db.String(120)) # removed this to make genre an association table
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
@@ -131,6 +130,7 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
+  '''
   data=[{
     "city": "San Francisco",
     "state": "CA",
@@ -152,7 +152,38 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  return render_template('pages/venues.html', areas=data);
+  '''
+  #venues = Venue.query.all()
+  '''
+  # dictionary of unique cities
+  # keys are city names and values are the index of the city in the data
+  cities = {}
+  data = []
+
+  for v in venues:
+    if v.city not in cities.keys():
+      cities[v.city] = len(data) # assign index of city
+      city_data = {
+        "city": v.city,
+        "state": v.state,
+        "venues": []
+      }
+      data.append(city_data)
+
+    venue_data = {
+      "id": v.id,
+      "name": v.name,
+      "num_upcoming_shows": 0
+    }
+    data_index = cities[v.city]
+    data[data_index]['venues'].append(venue_data)
+  '''
+  venue = Venue.query.get(3)
+  print(venue.shows)
+  print(shows.c)
+  
+  
+  return render_template('pages/venues.html', areas=[]);
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():

@@ -8,6 +8,8 @@ from app import Venue, Artist, Genre, db
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
+# TODO change all databse calls on this file to ORM methods
+
 #  Reset Tables
 #  ----------------------------------------------------------------
 
