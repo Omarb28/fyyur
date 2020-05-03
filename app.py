@@ -7,7 +7,7 @@ import json
 import dateutil.parser
 from datetime import datetime
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -107,6 +107,8 @@ class Genre(db.Model):
     __tablename__ = 'Genre'
 
     genre = db.Column(db.String(120), primary_key=True)
+    genres = db.relationship('Venue', secondary=venue_genres, backref=db.backref('venues', lazy=True))
+    genres = db.relationship('Artist', secondary=artist_genres, backref=db.backref('artists', lazy=True))
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -287,37 +289,44 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+  error = False
+  try:
+    req = request.form
+    #pp.pprint(request.form)
 
-  req = request.form
-  pp.pprint(request.form)
+    genres_str = request.form.getlist('genres')
+    genres = []
 
-  genres_str = request.form.getlist('genres')
-  genres = []
-
-  for g in genres_str:
-    genre = Genre.query.filter(Genre.genre == g).first()
-    genres.append(genre)
+    for g in genres_str:
+      genre = Genre.query.filter(Genre.genre == g).first()
+      genres.append(genre)
+    
+    venue = Venue(
+      name=req['name'],
+      genres=genres,
+      address=req["address"],
+      city=req["city"],
+      state=req["state"],
+      phone=req["phone"],
+      facebook_link=req["facebook_link"]
+    )
+    db.session.add(venue)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
   
-  venue = Venue(
-    name=req['name'],
-    #genres=genres,
-    address=req["address"],
-    city=req["city"],
-    state=req["state"],
-    phone=req["phone"],
-    facebook_link=req["facebook_link"]
-  )
-  db.session.add(venue)
-  db.session.commit()
+  if error:
+    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.', 'error')
+    form = VenueForm()
+    return render_template('forms/new_venue.html', form=form)
+  else:
+    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    return redirect(url_for('index'))
 
-  # on successful db insert, flash success
-  flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
