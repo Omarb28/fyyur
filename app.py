@@ -2,8 +2,7 @@
 # Imports
 #----------------------------------------------------------------------------#
 
-import os
-import json
+import os, sys, json
 import dateutil.parser
 from datetime import datetime
 import babel
@@ -289,6 +288,7 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
+  # called upon submitting the new venue listing form
   error = False
   try:
     req = request.form
@@ -521,14 +521,42 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+  error = False
+  try:
+    req = request.form
+    #pp.pprint(request.form)
+    
+    genres_str = request.form.getlist('genres')
+    genres = []
 
-  # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
-  return render_template('pages/home.html')
+    for g in genres_str:
+      genre = Genre.query.filter(Genre.genre == g).first()
+      genres.append(genre)
+    
+    artist = Artist(
+      name=req['name'],
+      genres=genres,
+      city=req["city"],
+      state=req["state"],
+      phone=req["phone"],
+      facebook_link=req["facebook_link"]
+    )
+    db.session.add(artist)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  if error:
+    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.', 'error')
+    form = ArtistForm()
+    return render_template('forms/new_artist.html', form=form)
+  else:
+    flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    return redirect(url_for('index'))
 
 
 #  Shows
