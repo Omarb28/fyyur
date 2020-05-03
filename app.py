@@ -525,7 +525,7 @@ def create_artist_submission():
   try:
     req = request.form
     #pp.pprint(request.form)
-    
+
     genres_str = request.form.getlist('genres')
     genres = []
 
@@ -629,14 +629,34 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
-  # TODO: insert form data as a new Show record in the db, instead
-
-  # on successful db insert, flash success
-  flash('Show was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Show could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
+  error = False
+  try:
+    req = request.form
+    #pp.pprint(request.form)
+    
+    # TODO: check artist and venue exist in the database
+    #       and convert time string to datetime
+    show = Show(
+      artist_id=req['artist_id'],
+      venue_id=req["venue_id"],
+      start_time=req["start_time"]
+    )
+    db.session.add(show)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  if error:
+    flash('An error occurred. Show could not be listed.', 'error')
+    form = ShowForm()
+    return render_template('forms/new_show.html', form=form)
+  else:
+    flash('Show was successfully listed!')
+    return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def not_found_error(error):
