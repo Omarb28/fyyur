@@ -31,7 +31,6 @@ venues = (
 for v in venues:
   venue = Venue(**v)
   db.session.add(venue)
-  db.session.commit()
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -45,7 +44,6 @@ artists = (
 for a in artists:
   artist = Artist(**a)
   db.session.add(artist)
-  db.session.commit()
 
 #  Shows
 #  ----------------------------------------------------------------
@@ -61,7 +59,6 @@ shows = (
 for s in shows:
   show = Show(**s)
   db.session.add(show)
-  db.session.commit()
 
 #  Genres
 #  ----------------------------------------------------------------
@@ -92,7 +89,6 @@ genres = (
 for g in genres:
   genre = Genre(**g)
   db.session.add(genre)
-  db.session.commit()
 
 #  Genre Association Tables
 #  ----------------------------------------------------------------
