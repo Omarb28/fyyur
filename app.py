@@ -68,9 +68,9 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
 
-    # TODO maybe change lazy loading to eager loading
-    shows = db.relationship('Show', backref=db.backref('venue'), lazy=True, cascade='all, delete-orphan', single_parent=True)
-    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy=True, cascade='all')
+    # todo maybe change lazy loading to eager loading
+    shows = db.relationship('Show', backref=db.backref('venue'), lazy=True, cascade='all, delete-orphan')
+    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy=True)
 
 
 class Artist(db.Model):
@@ -88,8 +88,8 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
 
-    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan', single_parent=True)
-    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy=True, cascade='all')
+    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan')
+    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy=True)
 
 # one-to-many relationship between (Parent->Show) and (Artist->Show)
 class Show(db.Model):
@@ -177,7 +177,7 @@ def venues():
       }
       data.append(city_data)
 
-    # TODO find a way to select columns by using the ORM instead of looping with python
+    # todo find a way to select columns by using the ORM instead of looping with python
     venue_data = {
       "id": v.id,
       "name": v.name,
@@ -332,10 +332,29 @@ def create_venue_submission():
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-
+  # called upon submitting the new venue listing form
+  error = False
+  venue_name = '(not found)'
+  try:
+    venue = Venue.query.get(venue_id)
+    venue_name = venue.name
+    db.session.delete(venue)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  if error:
+    flash('An error occurred. Venue ' + venue_name + ' could not be deleted.', 'error')
+  else:
+    flash('Venue ' + venue_name + ' was successfully deleted.')
+  
+  return redirect(url_for('index'))
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return None
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -575,27 +594,6 @@ def shows():
   }, {
     "venue_id": 3,
     "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 5,
-    "artist_name": "Matt Quevedo",
-    "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-    "start_time": "2019-06-15T23:00:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 6,
-    "artist_name": "The Wild Sax Band",
-    "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-    "start_time": "2035-04-01T20:00:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 6,
-    "artist_name": "The Wild Sax Band",
-    "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-    "start_time": "2035-04-08T20:00:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
     "artist_id": 6,
     "artist_name": "The Wild Sax Band",
     "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
@@ -634,7 +632,7 @@ def create_show_submission():
     req = request.form
     #pp.pprint(request.form)
     
-    # TODO: check artist and venue exist in the database
+    # todo: check artist and venue exist in the database
     #       and convert time string to datetime
     show = Show(
       artist_id=req['artist_id'],
