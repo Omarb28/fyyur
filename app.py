@@ -69,8 +69,8 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(240))
 
     # TODO maybe change lazy loading to eager loading
-    shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
-    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues', lazy=True))
+    shows = db.relationship('Show', backref=db.backref('venue'), lazy=True, cascade='all, delete-orphan', single_parent=True)
+    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy=True, cascade='all')
 
 
 class Artist(db.Model):
@@ -88,8 +88,8 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(240))
 
-    shows = db.relationship('Show', backref=db.backref('artist', lazy=True))
-    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists', lazy=True))
+    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan', single_parent=True)
+    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy=True, cascade='all')
 
 # one-to-many relationship between (Parent->Show) and (Artist->Show)
 class Show(db.Model):
@@ -106,8 +106,8 @@ class Genre(db.Model):
     __tablename__ = 'Genre'
 
     genre = db.Column(db.String(120), primary_key=True)
-    genres = db.relationship('Venue', secondary=venue_genres, backref=db.backref('venues', lazy=True))
-    genres = db.relationship('Artist', secondary=artist_genres, backref=db.backref('artists', lazy=True))
+    genres = db.relationship('Venue', secondary=venue_genres, backref=db.backref('venues'), lazy=True, cascade='all')
+    genres = db.relationship('Artist', secondary=artist_genres, backref=db.backref('artists'), lazy=True, cascade='all')
 
 #----------------------------------------------------------------------------#
 # Filters.
