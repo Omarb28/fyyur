@@ -3,7 +3,7 @@
 {% block content %}
   <div class="form-wrapper">
     <form class="form" method="post" action="/venues/{{venue.id}}/edit">
-      <h3 class="form-heading">Edit Venue: <em>{{ venue.name }}</em> <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
+      <h3 class="form-heading">Edit Venue: <b><em>{{ venue.name }}</em></b> <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
       <div class="form-group">
         <label for="name">Name</label>
         {{ form.name(class_ = 'form-control', autofocus = true, value = venue.name) }}
@@ -40,9 +40,10 @@
     </form>
   </div>
   <script>
+    // Code for selecting the options in select field for Venue's state
     const stateSelect = document.getElementsByClassName('state-select')[0];
     stateSelect.value = stateSelect.getAttribute('value');
-
+    // Code for selecting the options in select field for Venue's genres
     const genreSelect = document.getElementsByClassName('genre-select')[0];
     const genres = genreSelect.getAttribute('value').replace(/'|\[|\]|/g, '').split(', ');
     const genreOptions = document.querySelector(".genre-select").querySelectorAll('option');
