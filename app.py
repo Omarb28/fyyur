@@ -546,7 +546,39 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
+  error = False
+  try:
+    artist = Artist.query.get(artist_id)
+    req = request.form
 
+    genres_str = request.form.getlist('genres')
+    genres = []
+
+    for g in genres_str:
+      genre = Genre.query.filter(Genre.genre == g).first()
+      genres.append(genre)
+    
+    artist.name = name=req['name']
+    artist.genres = genres
+    artist.city = req["city"]
+    artist.state = req["state"]
+    artist.phone = req["phone"]
+    artist.facebook_link = req["facebook_link"]
+
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  if error:
+    flash('An error occurred. Artist ' + request.form['name'] + ' could not be updated.', 'error')
+    form = ArtistForm()
+    return render_template('forms/edit_artist.html', form=form)
+  else:
+    flash('Artist ' + request.form['name'] + ' was successfully updated!')
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
@@ -564,7 +596,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  # TODO: take values from the form submitted, and update existing
+  # DONE: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
   error = False
   try:

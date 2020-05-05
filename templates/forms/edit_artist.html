@@ -26,11 +26,11 @@
       <div class="form-group">
         <label for="genres">Genres</label>
         <small>Ctrl+Click to select multiple</small>
-        {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', autofocus = true, value = genres) }}
+        {{ form.genres(class_ = 'form-control genre-select', placeholder='Genres, separated by commas', autofocus = true, value = genres) }}
       </div>
       <div class="form-group">
           <label for="genres">Facebook Link</label>
-          {{ form.facebook_link(class_ = 'form-control genre-select', placeholder='http://', autofocus = true, value = artist.facebook_link) }}
+          {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true, value = artist.facebook_link) }}
         </div>
       <input type="submit" value="Edit Artist" class="btn btn-primary btn-lg btn-block">
     </form>
