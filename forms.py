@@ -18,13 +18,13 @@ class ShowForm(FlaskForm):
 
 class VenueForm(FlaskForm):
     name = StringField(
-        'name', validators=[DataRequired(), Length(min=3, max=50)], default="new venue"
+        'name', validators=[DataRequired(), Length(min=3, max=50)],
     )
     city = StringField(
-        'city', validators=[DataRequired()], default="new city"
+        'city', validators=[DataRequired()],
     )
     state = SelectField(
-        'state', validators=[DataRequired()], default="NY",
+        'state', validators=[DataRequired()],
         choices=[
             ('AL', 'AL'),
             ('AK', 'AK'),
@@ -80,7 +80,7 @@ class VenueForm(FlaskForm):
         ]
     )
     address = StringField(
-        'address', validators=[DataRequired()], default="new address"
+        'address', validators=[DataRequired()],
     )
     phone = StringField(
         'phone'

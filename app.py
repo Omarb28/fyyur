@@ -554,9 +554,9 @@ def edit_artist_submission(artist_id):
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
-def edit_venue(venue_id):
-  form = VenueForm()
-  venue={
+def edit_venue(venue_id):  
+  '''
+  venue_data={
     "id": 1,
     "name": "The Musical Hop",
     "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
@@ -570,8 +570,13 @@ def edit_venue(venue_id):
     "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
     "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
   }
+  '''
   # TODO: populate form with values from venue with ID <venue_id>
-  return render_template('forms/edit_venue.html', form=form, venue=venue)
+  form = VenueForm()
+  venue = Venue.query.get(venue_id)
+  genres = [g.genre for g in venue.genres]
+  
+  return render_template('forms/edit_venue.html', form=form, venue=venue, genres=genres)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
@@ -593,7 +598,6 @@ def create_artist_submission():
   error = False
   try:
     req = request.form
-    #pp.pprint(request.form)
 
     genres_str = request.form.getlist('genres')
     genres = []
@@ -641,13 +645,6 @@ def shows():
     "artist_name": "Guns N Petals",
     "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
     "start_time": "2019-05-21T21:30:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 6,
-    "artist_name": "The Wild Sax Band",
-    "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-    "start_time": "2035-04-15T20:00:00.000Z"
   }]
   '''
   shows = Show.query.all()
@@ -680,10 +677,15 @@ def create_show_submission():
   error = False
   try:
     req = request.form
-    #pp.pprint(request.form)
+
+    artist = Artist.query.get(req['artist_id'])
+    if artist is None:
+      raise Exception('Artist with id %s not found.' % req['artist_id'])
     
-    # todo: check artist and venue exist in the database
-    #       and convert time string to datetime
+    venue = Venue.query.get(req['venue_id'])
+    if venue is None:
+      raise Exception('Venue with id %s not found.' % req['venue_id'])
+
     show = Show(
       artist_id=req['artist_id'],
       venue_id=req["venue_id"],
