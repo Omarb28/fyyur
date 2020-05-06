@@ -225,9 +225,25 @@ class ArtistForm(FlaskForm):
             ('Other', 'Other'),
         ]
     )
+    website = StringField(
+        'facebook_link', validators=[URL()]
+    )
     facebook_link = StringField(
         # TODO implement enum restriction
         'facebook_link', validators=[URL()]
+    )
+    image_link = StringField(
+        'image_link', validators=[URL()]
+    )
+    seeking_talent = RadioField(
+        'seeking_talent', validators=[DataRequired()],
+        choices=[
+            (True, 'Yes'),
+            (False, 'No')
+        ]
+    )
+    seeking_description = TextAreaField(
+        'seeking_description', validators=[]
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

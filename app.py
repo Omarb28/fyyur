@@ -567,12 +567,20 @@ def edit_artist_submission(artist_id):
       genre = Genre.query.filter(Genre.genre == g).first()
       genres.append(genre)
     
-    artist.name = name=req['name']
+    seeking_talent = False
+    if req["seeking_talent"] == 'True':
+      seeking_talent = True
+
+    artist.name = req['name']
     artist.genres = genres
     artist.city = req["city"]
     artist.state = req["state"]
     artist.phone = req["phone"]
+    artist.website = req["website"]
     artist.facebook_link = req["facebook_link"]
+    artist.image_link = req["image_link"]
+    artist.seeking_talent = seeking_talent
+    artist.seeking_description= req["seeking_description"]
 
     db.session.commit()
   except:
