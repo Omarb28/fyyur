@@ -117,7 +117,7 @@ class VenueForm(FlaskForm):
         'facebook_link', validators=[URL()]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL()]
     )
     seeking_talent = RadioField(
         'seeking_talent', validators=[DataRequired()],

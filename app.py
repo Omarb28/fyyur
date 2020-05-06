@@ -325,6 +325,10 @@ def create_venue_submission():
       genre = Genre.query.filter(Genre.genre == g).first()
       genres.append(genre)
     
+    seeking_talent = False
+    if req["seeking_talent"] == 'True':
+      seeking_talent = True
+    
     venue = Venue(
       name=req['name'],
       genres=genres,
@@ -332,8 +336,13 @@ def create_venue_submission():
       city=req["city"],
       state=req["state"],
       phone=req["phone"],
-      facebook_link=req["facebook_link"]
+      website=req["website"],
+      facebook_link=req["facebook_link"],
+      image_link=req["facebook_link"],
+      seeking_talent=seeking_talent,
+      seeking_description=req["seeking_description"]
     )
+
     db.session.add(venue)
     db.session.commit()
   except:
