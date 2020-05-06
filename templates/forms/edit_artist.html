@@ -40,10 +40,10 @@
         <label for="image_link">Image Link</label>
         {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus = true, value = artist.image_link) }}
       </div>
-      <div class="form-group seeking-talent" data-seeking-talent="{{ artist.seeking_talent }}">
-        <label for="seeking_talent">Seeking Talent</label>
-        {% for subfield in form.seeking_talent %}
-          <div class="form-check form-check-inline seeking-talent-radios">
+      <div class="form-group seeking-venue" data-seeking-venue="{{ artist.seeking_venue }}">
+        <label for="seeking_venue">Seeking Venue</label>
+        {% for subfield in form.seeking_venue %}
+          <div class="form-check form-check-inline seeking-venue-radios">
               {{ subfield }}
               {{ subfield.label }}
           </div>
@@ -78,14 +78,14 @@
     if (seekingValue !== 'None') {
       seekingDescription.value = seekingValue;
     }
-    // Code for checking the radio button for seeking talent
-    const seekingTalentData = document.getElementsByClassName('seeking-talent')[0];
-    const seekingTalent = seekingTalentData.getAttribute("data-seeking-talent");
-    const radios = document.querySelectorAll('.seeking-talent-radios');
+    // Code for checking the radio button for seeking venue
+    const seekingVenueData = document.getElementsByClassName('seeking-venue')[0];
+    const seekingVenue = seekingVenueData.getAttribute("data-seeking-venue");
+    const radios = document.querySelectorAll('.seeking-venue-radios');
     radios.forEach(function(radio) {
       const radioInput = radio.querySelector('input');
       let radioValue = radioInput.value;
-      if (radioValue === seekingTalent) {
+      if (radioValue === seekingVenue) {
         radioInput.checked = true;
       }
     });
