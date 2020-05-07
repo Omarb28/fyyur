@@ -106,8 +106,6 @@ class Genre(db.Model):
     __tablename__ = 'Genre'
 
     genre = db.Column(db.String(120), primary_key=True)
-    genres = db.relationship('Venue', secondary=venue_genres, backref=db.backref('venues'), lazy=True, cascade='all')
-    genres = db.relationship('Artist', secondary=artist_genres, backref=db.backref('artists'), lazy=True, cascade='all')
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -376,12 +374,11 @@ def create_venue_submission():
     return redirect(url_for('show_venue', venue_id=venue_id))
 
 
-@app.route('/venues/<venue_id>', methods=['DELETE'])
+@app.route('/venues/<int:venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
   # DONE: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
   # called upon submitting the new venue listing form
-  print(venue_id)
   error = False
   venue_name = '(not found)'
   try:
@@ -404,6 +401,7 @@ def delete_venue(venue_id):
   return redirect(url_for('index'))
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
+  # DONE
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -554,7 +552,7 @@ def show_artist(artist_id):
 
   button_links = {
     "edit": url_for('edit_artist', artist_id=artist_id),
-    "delete": url_for('index')
+    "delete": url_for('delete_artist', artist_id=artist_id)
   }
   
   #data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
@@ -740,7 +738,7 @@ def create_artist_submission():
       facebook_link = req.get('facebook_link'),
       image_link = req.get('facebook_link'),
       seeking_venue = seeking_venue,
-      seeking_description = req.get('seeking_descriptio'),
+      seeking_description = req.get('seeking_description'),
     )
 
     db.session.add(artist)
@@ -763,6 +761,28 @@ def create_artist_submission():
     flash('Artist "' + request.form.get('name') + '" was succ"essfully listed!')
     return redirect(url_for('show_artist', artist_id=artist_id))
 
+@app.route('/artists/<int:artist_id>', methods=['DELETE'])
+def delete_artist(artist_id):
+  error = False
+  artist_name = '(not found)'
+  try:
+    artist = Artist.query.get(artist_id)
+    artist_name = artist.name
+    db.session.delete(artist)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  if error:
+    flash('An error occurred. Artist "' + artist_name + '" could not be deleted.', 'error')
+  else:
+    flash('Artist "' + artist_name + '" was successfully deleted.')
+  
+  return redirect(url_for('index'))
 
 #  Shows
 #  ----------------------------------------------------------------
