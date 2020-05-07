@@ -95,34 +95,9 @@
     if (seekingValue !== 'None') {
       seekingDescription.value = seekingValue;
     }
-    /*
-    // Code for checking the radio button for seeking talent
-    const seekingTalentData = document.getElementsByClassName('seeking-talent')[0];
-    const seekingTalent = seekingTalentData.getAttribute("data-seeking-talent");
-    const radios = document.querySelectorAll('.seeking-talent-radios');
-    radios.forEach(function(radio) {
-      const radioInput = radio.querySelector('input');
-      const radioValue = radioInput.value;
-      if (radioValue === seekingTalent) {
-        radioInput.checked = true;
-      }
-      radioInput.required = true;
-      // Code to disable seeking description if option No is checked
-      radioInput.onchange = function(event) {
-        if (radioValue === 'True' && radioInput.checked) {
-          seekingDescription.disabled = false;
-        }
-        else {
-          seekingDescription.disabled = true;
-        }
-      };
-      seekingDescription.disabled = seekingTalent === 'True' ? false : true;
-    });
-    */
     // Code to make seeking talent choice required and disable seeking description if option No is checked
     const seekingTalentData = document.getElementsByClassName('seeking-talent')[0];
     const seekingTalent = seekingTalentData.getAttribute("data-seeking-talent");
-    //const seekingDescription = document.getElementsByClassName('seeking-description')[0];
     const radios = document.querySelectorAll('.seeking-talent-radios');
     checkRadios = function(radioInput, radioValue) {
       if (radioInput.checked) {

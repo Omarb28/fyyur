@@ -583,6 +583,7 @@ def edit_artist_submission(artist_id):
   try:
     artist = Artist.query.get(artist_id)
     req = request.form
+    form = ArtistForm(req)
 
     genres_str = req.getlist('genres')
     genres = []
@@ -609,6 +610,10 @@ def edit_artist_submission(artist_id):
     artist.image_link = req.get('image_link')
     artist.seeking_venue = seeking_venue
     artist.seeking_description= seeking_description
+
+    if not form.validate_on_submit():
+      flash('An error occurred. Artist "' + req.get('name') + '" could not be updated.', 'error')
+      return render_template('forms/edit_artist.html', form=form, artist=artist, genres=genres)
 
     db.session.commit()
   except:
