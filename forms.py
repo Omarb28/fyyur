@@ -4,11 +4,19 @@ from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired, AnyOf, URL, Length
 
 class ShowForm(FlaskForm):
+    '''
     artist_id = StringField(
         'artist_id'
     )
     venue_id = StringField(
         'venue_id'
+    )
+    '''
+    artist_id = SelectField(
+        'artist_id', coerce=int, validators=[DataRequired()]
+    )
+    venue_id = SelectField(
+        'venue_id', coerce=int, validators=[DataRequired()]
     )
     start_time = DateTimeField(
         'start_time',
@@ -246,4 +254,4 @@ class ArtistForm(FlaskForm):
         'seeking_description', validators=[]
     )
 
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+# DONE: IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

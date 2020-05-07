@@ -324,9 +324,9 @@ def create_venue_submission():
   venue_id = 0
   try:
     req = request.form
-    #pp.pprint(request.form)
+    pp.pprint(request.form)
 
-    genres_str = request.form.getlist('genres')
+    genres_str = req.getlist('genres')
     genres = []
 
     for g in genres_str:
@@ -334,21 +334,21 @@ def create_venue_submission():
       genres.append(genre)
     
     seeking_talent = False
-    if req["seeking_talent"] == 'True':
+    if req.get('seeking_talent') == 'True':
       seeking_talent = True
-    
+
     venue = Venue(
-      name=req['name'],
-      genres=genres,
-      address=req["address"],
-      city=req["city"],
-      state=req["state"],
-      phone=req["phone"],
-      website=req["website"],
-      facebook_link=req["facebook_link"],
-      image_link=req["facebook_link"],
-      seeking_talent=seeking_talent,
-      seeking_description=req["seeking_description"]
+      name = req.get('name'),
+      genres = genres,
+      address = req.get('address'),
+      city = req.get('city'),
+      state = req.get('state'),
+      phone = req.get('phone'),
+      website = req.get("website"),
+      facebook_link = req.get('facebook_link'),
+      image_link = req.get('image_link'),
+      seeking_talent = seeking_talent,
+      seeking_description = req.get('seeking_descriptio')
     )
 
     db.session.add(venue)
@@ -579,7 +579,7 @@ def edit_artist_submission(artist_id):
     artist = Artist.query.get(artist_id)
     req = request.form
 
-    genres_str = request.form.getlist('genres')
+    genres_str = req.getlist('genres')
     genres = []
 
     for g in genres_str:
@@ -587,19 +587,23 @@ def edit_artist_submission(artist_id):
       genres.append(genre)
     
     seeking_venue = False
-    if req["seeking_venue"] == 'True':
+    if req.get('seeking_venue') == 'True':
       seeking_venue = True
 
-    artist.name = req['name']
+    seeking_description = req.get('seeking_description')
+    if seeking_description is None:
+      seeking_description = artist.seeking_description
+
+    artist.name = req.get('name')
     artist.genres = genres
-    artist.city = req["city"]
-    artist.state = req["state"]
-    artist.phone = req["phone"]
-    artist.website = req["website"]
-    artist.facebook_link = req["facebook_link"]
-    artist.image_link = req["image_link"]
+    artist.city = req.get('city')
+    artist.state = req.get('state')
+    artist.phone = req.get('phone')
+    artist.website = req.get('website')
+    artist.facebook_link = req.get('facebook_link')
+    artist.image_link = req.get('image_link')
     artist.seeking_venue = seeking_venue
-    artist.seeking_description= req["seeking_description"]
+    artist.seeking_description= seeking_description
 
     db.session.commit()
   except:
@@ -639,7 +643,7 @@ def edit_venue_submission(venue_id):
     venue = Venue.query.get(venue_id)
     req = request.form
 
-    genres_str = request.form.getlist('genres')
+    genres_str = req.getlist('genres')
     genres = []
 
     for g in genres_str:
@@ -647,20 +651,20 @@ def edit_venue_submission(venue_id):
       genres.append(genre)
 
     seeking_talent = False
-    if req["seeking_talent"] == 'True':
+    if req.get('seeking_talent') == 'True':
       seeking_talent = True
     
-    venue.name = name=req['name']
+    venue.name = req.get('name')
     venue.genres = genres
-    venue.address = req["address"]
-    venue.city = req["city"]
-    venue.state = req["state"]
-    venue.phone = req["phone"]
-    venue.website = req["website"]
-    venue.facebook_link = req["facebook_link"]
-    venue.image_link = req["image_link"]
+    venue.address = req.get('address')
+    venue.city = req.get('city')
+    venue.state = req.get('state')
+    venue.phone = req.get('phone')
+    venue.website = req.get('website')
+    venue.facebook_link = req.get('facebook_link')
+    venue.image_link = req.get('image_link')
     venue.seeking_talent = seeking_talent
-    venue.seeking_description= req["seeking_description"]
+    venue.seeking_description= req.get('seeking_description')
 
     db.session.commit()
   except:
@@ -695,7 +699,7 @@ def create_artist_submission():
   try:
     req = request.form
 
-    genres_str = request.form.getlist('genres')
+    genres_str = req.getlist('genres')
     genres = []
 
     for g in genres_str:
@@ -703,20 +707,20 @@ def create_artist_submission():
       genres.append(genre)
     
     seeking_venue = False
-    if req["seeking_venue"] == 'True':
+    if req.get('seeking_venue') == 'True':
       seeking_venue = True
     
     artist = Artist(
-      name=req['name'],
-      genres=genres,
-      city=req["city"],
-      state=req["state"],
-      phone=req["phone"],
-      website=req["website"],
-      facebook_link=req["facebook_link"],
-      image_link=req["facebook_link"],
-      seeking_venue=seeking_venue,
-      seeking_description=req["seeking_description"]
+      name = req['name'],
+      genres = genres,
+      city = req.get('city'),
+      state = req.get('state'),
+      phone = req.get('phone'),
+      website = req.get('website'),
+      facebook_link = req.get('facebook_link'),
+      image_link = req.get('facebook_link'),
+      seeking_venue = seeking_venue,
+      seeking_description = req.get('seeking_descriptio'),
     )
 
     db.session.add(artist)
@@ -775,8 +779,26 @@ def shows():
 
 @app.route('/shows/create')
 def create_shows():
-  # renders form. do not touch.
+  # renders form.
   form = ShowForm()
+
+  artists = Artist.query.order_by('id').all()
+  artist_choices = []
+  for a in artists:
+    artist_name = str(a.id) + ' - ' + a.name
+    choice = (a.id, artist_name)
+    artist_choices.append(choice)
+
+  venues = Venue.query.order_by('id').all()
+  venue_choices = []
+  for v in venues:
+    venue_name = str(v.id) + ' - ' + v.name
+    choice = (v.id, venue_name)
+    venue_choices.append(choice)
+
+  form.artist_id.choices = artist_choices
+  form.venue_id.choices = venue_choices
+
   return render_template('forms/new_show.html', form=form)
 
 @app.route('/shows/create', methods=['POST'])
@@ -786,18 +808,18 @@ def create_show_submission():
   try:
     req = request.form
 
-    artist = Artist.query.get(req['artist_id'])
+    artist = Artist.query.get(req.get('artist_id'))
     if artist is None:
-      raise Exception('Artist with id %s not found.' % req['artist_id'])
+      raise Exception('Artist with id %s not found.' % req.get('artist_id'))
     
-    venue = Venue.query.get(req['venue_id'])
+    venue = Venue.query.get(req.get('venue_id'))
     if venue is None:
-      raise Exception('Venue with id %s not found.' % req['venue_id'])
+      raise Exception('Venue with id %s not found.' % req.get('venue_id'))
 
     show = Show(
-      artist_id=req['artist_id'],
-      venue_id=req["venue_id"],
-      start_time=req["start_time"]
+      artist_id = req.get('artist_id'),
+      venue_id = req.get('venue_id'),
+      start_time = req.get('start_time')
     )
     db.session.add(show)
     db.session.commit()
@@ -814,7 +836,7 @@ def create_show_submission():
     return render_template('forms/new_show.html', form=form)
   else:
     flash('Show was successfully listed!')
-    return redirect(url_for('index'))
+    return redirect(url_for('shows'))
 
 @app.errorhandler(404)
 def not_found_error(error):

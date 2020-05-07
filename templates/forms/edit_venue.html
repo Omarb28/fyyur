@@ -88,11 +88,21 @@
     const radios = document.querySelectorAll('.seeking-talent-radios');
     radios.forEach(function(radio) {
       const radioInput = radio.querySelector('input');
-      let radioValue = radioInput.value;
+      const radioValue = radioInput.value;
       if (radioValue === seekingTalent) {
         radioInput.checked = true;
       }
       radioInput.required = true;
+      // Code to disable seeking description if option No is checked
+      radioInput.onchange = function(event) {
+        if (radioValue === 'True') {
+          seekingDescription.disabled = false;
+        }
+        else {
+          seekingDescription.disabled = true;
+        }
+      };
+      seekingDescription.disabled = seekingTalent === 'True' ? false : true;
     });
   </script>
 {% endblock %}

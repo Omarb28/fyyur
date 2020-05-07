@@ -51,17 +51,31 @@
       </div>
       <div class="form-group">
         <label for="seeking_description">Seeking Description</label>
-        {{ form.seeking_description(class_ = 'form-control', placeholder='Type your seeking description here', autofocus = true) }}
+        {{ form.seeking_description(class_ = 'form-control seeking-description', placeholder='Type your seeking description here', autofocus = true) }}
       </div>
       <input type="submit" value="Create Artist" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
   <script>
+    const seekingDescription = document.getElementsByClassName('seeking-description')[0];
+    seekingDescription.disabled = true;
+    // Code to make seeking venue choice required
     const radios = document.querySelectorAll('.seeking-venue-radios');
     radios.forEach(function(radio) {
       const radioInput = radio.querySelector('input');
+      const radioValue = radioInput.value;
       radioInput.required = true;
-      console.log(radioInput);
+      // Code to disable seeking description if option No is checked
+      radioInput.onchange = function(event) {
+        if (radioValue === 'True') {
+          seekingDescription.disabled = false;
+          seekingDescription.required = true;
+        }
+        else {
+          seekingDescription.disabled = true;
+          seekingDescription.required = false;
+        }
+      };
     });
   </script>
 {% endblock %}
