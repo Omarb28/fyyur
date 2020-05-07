@@ -135,7 +135,7 @@ class VenueForm(FlaskForm):
         ]
     )
     seeking_description = TextAreaField(
-        'seeking_description', validators=[Length(min=10, max=240)]
+        'seeking_description', validators=[Length(max=240)]
     )
 
 class ArtistForm(FlaskForm):
@@ -247,7 +247,7 @@ class ArtistForm(FlaskForm):
         ]
     )
     seeking_description = TextAreaField(
-        'seeking_description', validators=[Length(min=10, max=240)]
+        'seeking_description', validators=[Length(max=240)]
     )
 
 # DONE: IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

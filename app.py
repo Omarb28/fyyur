@@ -647,6 +647,7 @@ def edit_venue_submission(venue_id):
   try:
     venue = Venue.query.get(venue_id)
     req = request.form
+    form = VenueForm(req)
 
     genres_str = req.getlist('genres')
     genres = []
@@ -670,6 +671,10 @@ def edit_venue_submission(venue_id):
     venue.image_link = req.get('image_link')
     venue.seeking_talent = seeking_talent
     venue.seeking_description= req.get('seeking_description')
+
+    if not form.validate_on_submit():
+      flash('An error occurred. Venue "' + req.get('name') + '" could not be updated.', 'error')
+      return render_template('forms/edit_venue.html', form=form, venue=venue, genres=genres)
 
     db.session.commit()
   except:

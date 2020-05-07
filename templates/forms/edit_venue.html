@@ -1,4 +1,5 @@
 {% extends 'layouts/main.html' %}
+{% from "/forms/_form_errors_macro.html" import render_errors %}
 {% block title %}Edit Venue{% endblock %}
 {% block content %}
   <div class="form-wrapper">
@@ -7,42 +8,51 @@
       <div class="form-group">
         <label for="name">Name</label>
         {{ form.name(class_ = 'form-control', autofocus = true, value = venue.name) }}
+        {{ render_errors(form.name) }}
       </div>
       <div class="form-group">
           <label>City & State</label>
           <div class="form-inline">
             <div class="form-group">
               {{ form.city(class_ = 'form-control', placeholder='City', autofocus = true, value = venue.city) }}
+              {{ render_errors(form.city) }}
             </div>
             <div class="form-group">
               {{ form.state(class_ = 'form-control state-select', placeholder='State', autofocus = true, value = venue.state) }}
+              {{ render_errors(form.state) }}
             </div>
           </div>
       </div>
       <div class="form-group">
         <label for="address">Address</label>
         {{ form.address(class_ = 'form-control', autofocus = true, value = venue.address) }}
+        {{ render_errors(form.address) }}
       </div>
       <div class="form-group">
           <label for="phone">Phone</label>
           {{ form.phone(class_ = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true, value = venue.phone) }}
+          {{ render_errors(form.phone) }}
         </div>
       <div class="form-group">
         <label for="genres">Genres</label>
         <small>Ctrl+Click to select multiple</small>
         {{ form.genres(class_ = 'form-control genre-select', placeholder='Genres, separated by commas', autofocus = true, value = genres) }}
+        {{ render_errors(form.genres) }}
       </div>
       <div class="form-group">
         <label for="website">Website</label>
         {{ form.website(class_ = 'form-control', placeholder='http://', autofocus = true, value = venue.website) }}
+        {{ render_errors(form.website) }}
       </div>
       <div class="form-group">
           <label for="facebook_link">Facebook Link</label>
           {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true, value = venue.facebook_link) }}
+          {{ render_errors(form.facebook_link) }}
       </div>
       <div class="form-group">
         <label for="image_link">Image Link</label>
         {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus = true, value = venue.image_link) }}
+        {{ render_errors(form.image_link) }}
       </div>
       <div class="form-group seeking-talent" data-seeking-talent="{{ venue.seeking_talent }}">
         <label for="seeking_talent">Seeking Talent</label>
@@ -52,13 +62,16 @@
               {{ subfield.label }}
           </div>
         {% endfor %}
+        {{ render_errors(form.seeking_talent) }}
       </div>
       <div class="form-group">
         <label for="seeking_description">Seeking Description</label>
         {{ form.seeking_description(class_ = 'form-control seeking-description', placeholder='Type your seeking description here', 
             autofocus = true, value = venue.seeking_description) }}
+        {{ render_errors(form.seeking_description) }}
       </div>
       <input type="submit" value="Edit Venue" class="btn btn-primary btn-lg btn-block">
+      {{ form.csrf_token }}
     </form>
   </div>
   <script>
@@ -82,6 +95,7 @@
     if (seekingValue !== 'None') {
       seekingDescription.value = seekingValue;
     }
+    /*
     // Code for checking the radio button for seeking talent
     const seekingTalentData = document.getElementsByClassName('seeking-talent')[0];
     const seekingTalent = seekingTalentData.getAttribute("data-seeking-talent");
@@ -102,6 +116,37 @@
           seekingDescription.disabled = true;
         }
       };
+      seekingDescription.disabled = seekingTalent === 'True' ? false : true;
+    });
+    */
+    // Code to make seeking talent choice required and disable seeking description if option No is checked
+    const seekingTalentData = document.getElementsByClassName('seeking-talent')[0];
+    const seekingTalent = seekingTalentData.getAttribute("data-seeking-talent");
+    //const seekingDescription = document.getElementsByClassName('seeking-description')[0];
+    const radios = document.querySelectorAll('.seeking-talent-radios');
+    checkRadios = function(radioInput, radioValue) {
+      if (radioInput.checked) {
+        if (radioValue === 'True') {
+          seekingDescription.disabled = false;
+          seekingDescription.required = true;
+        }
+        else {
+          seekingDescription.disabled = true;
+          seekingDescription.required = false;
+        }
+      }
+    };
+    radios.forEach(function(radio) {
+      const radioInput = radio.querySelector('input');
+      const radioValue = radioInput.value;
+      radioInput.required = true;
+      if (radioValue === seekingTalent) {
+        radioInput.checked = true;
+      }
+      radioInput.onclick = function(e) {
+        checkRadios(radioInput, radioValue);
+      }
+      checkRadios(radioInput, radioValue);
       seekingDescription.disabled = seekingTalent === 'True' ? false : true;
     });
   </script>
