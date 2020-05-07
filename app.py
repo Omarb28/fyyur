@@ -303,7 +303,7 @@ def show_venue(venue_id):
 
   button_links = {
     "edit": url_for('edit_venue', venue_id=venue_id),
-    "delete": url_for('index')
+    "delete": url_for('delete_venue', venue_id=venue_id)
   }
 
   #data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
@@ -377,6 +377,7 @@ def delete_venue(venue_id):
   # DONE: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
   # called upon submitting the new venue listing form
+  print(venue_id)
   error = False
   venue_name = '(not found)'
   try:

@@ -33,9 +33,8 @@
 				</p>
 			</div>
 			<div class="col-sm-2" style="padding-left: 40px">
-				<button class="btn btn-info" type="button" style="border-color: cornflowerblue; background: cornflowerblue;"
-								onclick="location.href='{{ button_links.edit }}'">Edit</button>
-				<button class="btn btn-danger" type="button" onclick="location.href='{{ button_links.delete }}'">Delete</button>
+				<button id="edit-venue" data-edit-link="{{ button_links.edit }}" class="btn btn-info" type="button" style="border-color: cornflowerblue; background: cornflowerblue;">Edit</button>
+				<button id="delete-venue" data-delete-link="{{ button_links.delete }}" class="btn btn-danger" type="button" >Delete</button>
 			</div>
 		</div>
 		{% if venue.seeking_talent %}
@@ -83,6 +82,24 @@
 		{% endfor %}
 	</div>
 </section>
+<script>
+	const editButton = document.getElementById('edit-venue');
+	editButton.onclick = function(event) {
+		event.preventDefault();
+		location.href = editButton.getAttribute('data-edit-link');
+	};
+	const deleteButton = document.getElementById('delete-venue');
+	deleteButton.onclick = function(event) {
+		event.preventDefault();
+		const deleteLink = deleteButton.getAttribute('data-delete-link');
 
+		fetch(deleteLink, {
+			method: 'DELETE'
+		})
+		.then(function(data) {
+			location.href = '/';
+		});
+	};
+</script>
 {% endblock %}
 
