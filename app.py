@@ -299,8 +299,13 @@ def show_venue(venue_id):
     "upcoming_shows_count": len(upcoming_shows)
   }
 
+  button_links = {
+    "edit": url_for('edit_venue', venue_id=venue_id),
+    "delete": url_for('index')
+  }
+
   #data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=venue_data)
+  return render_template('pages/show_venue.html', venue=venue_data, button_links=button_links)
 
 #  Create Venue
 #  ----------------------------------------------------------------
@@ -532,9 +537,14 @@ def show_artist(artist_id):
     "past_shows_count": len(past_shows),
     "upcoming_shows_count": len(upcoming_shows)
   }
+
+  button_links = {
+    "edit": url_for('edit_artist', artist_id=artist_id),
+    "delete": url_for('index')
+  }
   
   #data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_artist.html', artist=artist_data)
+  return render_template('pages/show_artist.html', artist=artist_data, button_links=button_links)
 
 #  Update
 #  ----------------------------------------------------------------

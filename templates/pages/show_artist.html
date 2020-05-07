@@ -14,18 +14,27 @@
 			<span class="genre">{{ genre }}</span>
 			{% endfor %}
 		</div>
-		<p>
-			<i class="fas fa-globe-americas"></i> {{ artist.city }}, {{ artist.state }}
-		</p>
-		<p>
-			<i class="fas fa-phone-alt"></i> {% if artist.phone %}{{ artist.phone }}{% else %}No Phone{% endif %}
-        </p>
-        <p>
-			<i class="fas fa-link"></i> {% if artist.website %}<a href="{{ artist.website }}" target="_blank">{{ artist.website }}</a>{% else %}No Website{% endif %}
-		</p>
-		<p>
-			<i class="fab fa-facebook-f"></i> {% if artist.facebook_link %}<a href="{{ artist.facebook_link }}" target="_blank">{{ artist.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
-        </p>
+		<div class="container" style="padding-left: 0">
+			<div class="col-sm-4" style="padding-left: 0;">
+				<p>
+					<i class="fas fa-globe-americas"></i> {{ artist.city }}, {{ artist.state }}
+				</p>
+				<p>
+					<i class="fas fa-phone-alt"></i> {% if artist.phone %}{{ artist.phone }}{% else %}No Phone{% endif %}
+						</p>
+						<p>
+					<i class="fas fa-link"></i> {% if artist.website %}<a href="{{ artist.website }}" target="_blank">{{ artist.website }}</a>{% else %}No Website{% endif %}
+				</p>
+				<p>
+					<i class="fab fa-facebook-f"></i> {% if artist.facebook_link %}<a href="{{ artist.facebook_link }}" target="_blank">{{ artist.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
+				</p>
+			</div>
+			<div class="col-sm-2" style="padding-left: 40px">
+				<button class="btn btn-info" type="button" style="border-color: cornflowerblue; background: cornflowerblue;"
+								onclick="location.href='{{ button_links.edit }}'">Edit</button>
+				<button class="btn btn-danger" type="button" onclick="location.href='{{ button_links.delete }}'">Delete</button>
+			</div>
+		</div>
 		{% if artist.seeking_venue %}
 		<div class="seeking">
 			<p class="lead">Currently seeking performance venues</p>

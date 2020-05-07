@@ -14,21 +14,30 @@
 			<span class="genre">{{ genre }}</span>
 			{% endfor %}
 		</div>
-		<p>
-			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
-		</p>
-		<p>
-			<i class="fas fa-map-marker"></i> {% if venue.address %}{{ venue.address }}{% else %}No Address{% endif %}
-		</p>
-		<p>
-			<i class="fas fa-phone-alt"></i> {% if venue.phone %}{{ venue.phone }}{% else %}No Phone{% endif %}
-		</p>
-		<p>
-			<i class="fas fa-link"></i> {% if venue.website %}<a href="{{ venue.website }}" target="_blank">{{ venue.website }}</a>{% else %}No Website{% endif %}
-		</p>
-		<p>
-			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
-		</p>
+		<div class="container" style="padding-left: 0">
+			<div class="col-sm-4" style="padding-left: 0;">
+				<p>
+					<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
+				</p>
+				<p>
+					<i class="fas fa-map-marker"></i> {% if venue.address %}{{ venue.address }}{% else %}No Address{% endif %}
+				</p>
+				<p>
+					<i class="fas fa-phone-alt"></i> {% if venue.phone %}{{ venue.phone }}{% else %}No Phone{% endif %}
+				</p>
+				<p>
+					<i class="fas fa-link"></i> {% if venue.website %}<a href="{{ venue.website }}" target="_blank">{{ venue.website }}</a>{% else %}No Website{% endif %}
+				</p>
+				<p>
+					<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
+				</p>
+			</div>
+			<div class="col-sm-2" style="padding-left: 40px">
+				<button class="btn btn-info" type="button" style="border-color: cornflowerblue; background: cornflowerblue;"
+								onclick="location.href='{{ button_links.edit }}'">Edit</button>
+				<button class="btn btn-danger" type="button" onclick="location.href='{{ button_links.delete }}'">Delete</button>
+			</div>
+		</div>
 		{% if venue.seeking_talent %}
 		<div class="seeking">
 			<p class="lead">Currently seeking talent</p>
@@ -36,7 +45,7 @@
 				<i class="fas fa-quote-left"></i> {{ venue.seeking_description }} <i class="fas fa-quote-right"></i>
 			</div>
 		</div>
-		{% else %}	
+		{% else %} 
 		<p class="not-seeking">
 			<i class="fas fa-moon"></i> Not currently seeking talent
 		</p>
