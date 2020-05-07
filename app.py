@@ -25,7 +25,7 @@ moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-pp = PrettyPrinter()
+pprint = PrettyPrinter()
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -324,7 +324,17 @@ def create_venue_submission():
   venue_id = 0
   try:
     req = request.form
-    pp.pprint(request.form)
+    form = VenueForm(req)
+
+    pprint.pprint(dir(form))
+    pprint.pprint(form.errors)
+    pprint.pprint(form.is_submitted())
+    pprint.pprint(form.validate())
+    pprint.pprint(form.validate_on_submit())
+    pprint.pprint(form.data)
+    if not form.validate():
+      flash('An error occurred. Venue ' + req.get('name') + ' could not be listed.', 'error')
+      return render_template('forms/new_venue.html', form=form)
 
     genres_str = req.getlist('genres')
     genres = []
@@ -364,11 +374,11 @@ def create_venue_submission():
     db.session.close()
   
   if error:
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.', 'error')
+    flash('An error occurred. Venue ' + request.form.get('name') + ' could not be listed.', 'error')
     form = VenueForm()
     return render_template('forms/new_venue.html', form=form)
   else:
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    flash('Venue ' + request.form.get('name') + ' was successfully listed!')
     return redirect(url_for('show_venue', venue_id=venue_id))
 
 
@@ -615,11 +625,11 @@ def edit_artist_submission(artist_id):
     db.session.close()
   
   if error:
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be updated.', 'error')
+    flash('An error occurred. Artist ' + request.form.get('name') + ' could not be updated.', 'error')
     form = ArtistForm()
     return render_template('forms/edit_artist.html', form=form)
   else:
-    flash('Artist ' + request.form['name'] + ' was successfully updated!')
+    flash('Artist ' + request.form.get('name') + ' was successfully updated!')
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
@@ -676,11 +686,11 @@ def edit_venue_submission(venue_id):
     db.session.close()
   
   if error:
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be updated.', 'error')
+    flash('An error occurred. Venue ' + request.form.get('name') + ' could not be updated.', 'error')
     form = VenueForm()
     return redirect(url_for('edit_venue', venue_id=venue_id))
   else:
-    flash('Venue ' + request.form['name'] + ' was successfully updated!')
+    flash('Venue ' + request.form.get('name') + ' was successfully updated!')
     return redirect(url_for('show_venue', venue_id=venue_id))
   
 
@@ -737,11 +747,11 @@ def create_artist_submission():
     db.session.close()
   
   if error:
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.', 'error')
+    flash('An error occurred. Artist ' + request.form.get('name') + ' could not be listed.', 'error')
     form = ArtistForm()
     return render_template('forms/new_artist.html', form=form)
   else:
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    flash('Artist ' + request.form.get('name') + ' was successfully listed!')
     return redirect(url_for('show_artist', artist_id=artist_id))
 
 
