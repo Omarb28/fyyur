@@ -257,6 +257,8 @@ def show_venue(venue_id):
   }
   '''
   venue = Venue.query.get(venue_id)
+  if venue is None:
+    abort(404)
   
   past_shows = []
   upcoming_shows = []
@@ -319,6 +321,7 @@ def create_venue_form():
 def create_venue_submission():
   # called upon submitting the new venue listing form
   error = False
+  venue_id = 0
   try:
     req = request.form
     #pp.pprint(request.form)
@@ -350,6 +353,9 @@ def create_venue_submission():
 
     db.session.add(venue)
     db.session.commit()
+
+    # find id of venue after creation to redirect url to it
+    venue_id = venue.id
   except:
     error = True
     db.session.rollback()
@@ -363,7 +369,7 @@ def create_venue_submission():
     return render_template('forms/new_venue.html', form=form)
   else:
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
-    return redirect(url_for('index'))
+    return redirect(url_for('show_venue', venue_id=venue_id))
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -496,7 +502,9 @@ def show_artist(artist_id):
   }
   '''
   artist = Artist.query.get(artist_id)
-  
+  if artist is None:
+    abort(404)
+
   past_shows = []
   upcoming_shows = []
 
@@ -531,6 +539,7 @@ def show_artist(artist_id):
     "website": artist.website,
     "facebook_link": artist.facebook_link,
     "seeking_venue": artist.seeking_venue,
+    "seeking_description": artist.seeking_description,
     "image_link": artist.image_link,
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
@@ -682,6 +691,7 @@ def create_artist_form():
 def create_artist_submission():
   # called upon submitting the new artist listing form
   error = False
+  artist_id = 0
   try:
     req = request.form
 
@@ -711,6 +721,9 @@ def create_artist_submission():
 
     db.session.add(artist)
     db.session.commit()
+
+    # find id of artist after creation to redirect url to it
+    artist_id = artist.id
   except:
     error = True
     db.session.rollback()
@@ -724,7 +737,7 @@ def create_artist_submission():
     return render_template('forms/new_artist.html', form=form)
   else:
     flash('Artist ' + request.form['name'] + ' was successfully listed!')
-    return redirect(url_for('index'))
+    return redirect(url_for('show_artist', artist_id=artist_id))
 
 
 #  Shows

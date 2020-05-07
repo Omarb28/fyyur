@@ -47,7 +47,7 @@
       <div class="form-group">
         <label for="seeking_talent">Seeking Talent</label>
         {% for subfield in form.seeking_talent %}
-          <div class="form-check form-check-inline">
+          <div class="form-check form-check-inline seeking-talent-radios">
               {{ subfield }}
               {{ subfield.label }}
           </div>
@@ -60,4 +60,12 @@
       <input type="submit" value="Create Venue" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
+  <script>
+    const radios = document.querySelectorAll('.seeking-talent-radios');
+    radios.forEach(function(radio) {
+      const radioInput = radio.querySelector('input');
+      radioInput.required = true;
+      console.log(radioInput);
+    });
+  </script>
 {% endblock %}

@@ -235,8 +235,8 @@ class ArtistForm(FlaskForm):
     image_link = StringField(
         'image_link', validators=[URL()]
     )
-    seeking_talent = RadioField(
-        'seeking_talent', validators=[DataRequired()],
+    seeking_venue = RadioField(
+        'seeking_venue', validators=[DataRequired()],
         choices=[
             (True, 'Yes'),
             (False, 'No')
