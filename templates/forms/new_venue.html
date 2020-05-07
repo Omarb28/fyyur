@@ -74,16 +74,11 @@
     </form>
   </div>
   <script>
+    // Code to make seeking talent choice required and disable seeking description if option No is checked
     const seekingDescription = document.getElementsByClassName('seeking-description')[0];
-    seekingDescription.disabled = true;
-    // Code to make seeking talent choice required
     const radios = document.querySelectorAll('.seeking-talent-radios');
-    radios.forEach(function(radio) {
-      const radioInput = radio.querySelector('input');
-      const radioValue = radioInput.value;
-      radioInput.required = true;
-      // Code to disable seeking description if option No is checked
-      radioInput.onchange = function(event) {
+    checkRadios = function(radioInput, radioValue) {
+      if (radioInput.checked) {
         if (radioValue === 'True') {
           seekingDescription.disabled = false;
           seekingDescription.required = true;
@@ -92,7 +87,16 @@
           seekingDescription.disabled = true;
           seekingDescription.required = false;
         }
-      };
+      }
+    };
+    radios.forEach(function(radio) {
+      const radioInput = radio.querySelector('input');
+      const radioValue = radioInput.value;
+      radioInput.required = true;
+      radioInput.onclick = function(e) {
+        checkRadios(radioInput, radioValue);
+      }
+      checkRadios(radioInput, radioValue);
     });
   </script>
 {% endblock %}

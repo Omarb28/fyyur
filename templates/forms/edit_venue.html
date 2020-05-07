@@ -95,7 +95,7 @@
       radioInput.required = true;
       // Code to disable seeking description if option No is checked
       radioInput.onchange = function(event) {
-        if (radioValue === 'True') {
+        if (radioValue === 'True' && radioInput.checked) {
           seekingDescription.disabled = false;
         }
         else {

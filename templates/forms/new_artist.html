@@ -1,4 +1,5 @@
 {% extends 'layouts/main.html' %}
+{% from "/forms/_form_errors_macro.html" import render_errors %}
 {% block title %}New Artist{% endblock %}
 {% block content %}
   <div class="form-wrapper">
@@ -7,38 +8,46 @@
       <div class="form-group">
         <label for="name">Name</label>
         {{ form.name(class_ = 'form-control', autofocus = true) }}
+        {{ render_errors(form.name) }}
       </div>
       <div class="form-group">
           <label>City & State</label>
           <div class="form-inline">
             <div class="form-group">
               {{ form.city(class_ = 'form-control', placeholder='City', autofocus = true) }}
+              {{ render_errors(form.city) }}
             </div>
             <div class="form-group">
               {{ form.state(class_ = 'form-control', placeholder='State', autofocus = true) }}
+              {{ render_errors(form.state) }}
             </div>
           </div>
       </div>
       <div class="form-group">
           <label for="phone">Phone</label>
           {{ form.phone(class_ = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true) }}
+          {{ render_errors(form.phone) }}
         </div>
       <div class="form-group">
         <label for="genres">Genres</label>
         <small>Ctrl+Click to select multiple</small>
         {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', autofocus = true) }}
+        {{ render_errors(form.genres) }}
       </div>
       <div class="form-group">
         <label for="website">Website</label>
         {{ form.website(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+        {{ render_errors(form.website) }}
       </div>
       <div class="form-group">
           <label for="facebook_link">Facebook Link</label>
           {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+          {{ render_errors(form.facebook_link) }}
         </div>
       <div class="form-group">
         <label for="image_link">Image Link</label>
         {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+        {{ render_errors(form.image_link) }}
       </div>
       <div class="form-group">
         <label for="seeking_venue">Seeking Venue</label>
@@ -48,25 +57,23 @@
               {{ subfield.label }}
           </div>
         {% endfor %}
+        {{ render_errors(form.seeking_venue) }}
       </div>
       <div class="form-group">
         <label for="seeking_description">Seeking Description</label>
         {{ form.seeking_description(class_ = 'form-control seeking-description', placeholder='Type your seeking description here', autofocus = true) }}
+        {{ render_errors(form.seeking_description) }}
       </div>
       <input type="submit" value="Create Artist" class="btn btn-primary btn-lg btn-block">
+      {{ form.csrf_token }} 
     </form>
   </div>
   <script>
+    // Code to make seeking talent choice required and disable seeking description if option No is checked
     const seekingDescription = document.getElementsByClassName('seeking-description')[0];
-    seekingDescription.disabled = true;
-    // Code to make seeking venue choice required
     const radios = document.querySelectorAll('.seeking-venue-radios');
-    radios.forEach(function(radio) {
-      const radioInput = radio.querySelector('input');
-      const radioValue = radioInput.value;
-      radioInput.required = true;
-      // Code to disable seeking description if option No is checked
-      radioInput.onchange = function(event) {
+    checkRadios = function(radioInput, radioValue) {
+      if (radioInput.checked) {
         if (radioValue === 'True') {
           seekingDescription.disabled = false;
           seekingDescription.required = true;
@@ -75,7 +82,16 @@
           seekingDescription.disabled = true;
           seekingDescription.required = false;
         }
-      };
+      }
+    };
+    radios.forEach(function(radio) {
+      const radioInput = radio.querySelector('input');
+      const radioValue = radioInput.value;
+      radioInput.required = true;
+      radioInput.onclick = function(e) {
+        checkRadios(radioInput, radioValue);
+      }
+      checkRadios(radioInput, radioValue);
     });
   </script>
 {% endblock %}

@@ -26,13 +26,13 @@ class ShowForm(FlaskForm):
 
 class VenueForm(FlaskForm):
     name = StringField(
-        'name', validators=[DataRequired(), Length(min=3)]
+        'name', validators=[DataRequired(), Length(min=5, max=50)]
     )
     city = StringField(
-        'city'
+        'city', validators=[DataRequired(), Length(max=50)]
     )
     state = SelectField(
-        'state',
+        'state', validators=[DataRequired()],
         choices=[
             ('AL', 'AL'),
             ('AK', 'AK'),
@@ -88,14 +88,14 @@ class VenueForm(FlaskForm):
         ]
     )
     address = StringField(
-        'address'
+        'address', validators=[DataRequired(), Length(max=120)]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[Length(max=50)]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
-        'genres',
+        'genres', validators=[DataRequired()],
         choices=[
             ('Alternative', 'Alternative'),
             ('Blues', 'Blues'),
@@ -119,31 +119,31 @@ class VenueForm(FlaskForm):
         ]
     )
     website = StringField(
-        'facebook_link'
+        'facebook_link', validators=[URL()]
     )
     facebook_link = StringField(
-        'facebook_link'
+        'facebook_link', validators=[URL()]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL()]
     )
     seeking_talent = RadioField(
-        'seeking_talent',
+        'seeking_talent', validators=[DataRequired()],
         choices=[
             ('True', 'Yes'),
             ('False', 'No')
         ]
     )
     seeking_description = TextAreaField(
-        'seeking_description'
+        'seeking_description', validators=[Length(min=10, max=240)]
     )
 
 class ArtistForm(FlaskForm):
     name = StringField(
-        'name', validators=[DataRequired()]
+        'name', validators=[DataRequired(), Length(min=5, max=50)]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), Length(max=50)]
     )
     state = SelectField(
         'state', validators=[DataRequired()],
@@ -202,11 +202,7 @@ class ArtistForm(FlaskForm):
         ]
     )
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
-    )
-    image_link = StringField(
-        'image_link'
+        'phone', validators=[Length(max=50)]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -246,12 +242,12 @@ class ArtistForm(FlaskForm):
     seeking_venue = RadioField(
         'seeking_venue', validators=[DataRequired()],
         choices=[
-            (True, 'Yes'),
-            (False, 'No')
+            ('True', 'Yes'),
+            ('False', 'No')
         ]
     )
     seeking_description = TextAreaField(
-        'seeking_description', validators=[]
+        'seeking_description', validators=[Length(min=10, max=240)]
     )
 
 # DONE: IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
