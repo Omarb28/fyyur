@@ -878,6 +878,34 @@ def create_show_submission():
     flash('Show was succwas successfully listed!')
     return redirect(url_for('shows'))
 
+@app.route('/shows/search', methods=['POST'])
+def search_shows():
+  response = {}
+
+  search_term = request.form.get('search_term', '')
+  #shows = db.session.query(Show, Artist).join(Artist).filter(Artist.name.ilike('%' + search_term + '%')).all()
+  shows = db.session.query(Show, Artist, Venue).join(Artist).join(Venue).filter(db.or_(Venue.name.ilike('%' + search_term + '%'),
+                                                                                        Artist.name.ilike('%' + search_term + '%'))).all()
+
+  data = []
+  for show, artist, venue in shows:
+    show_data = {
+      "venue_id": venue.id,
+      "venue_name": venue.name,
+      "artist_id": artist.id,
+      "artist_name": artist.name,
+      "artist_image_link": artist.image_link,
+      "start_time": show.start_time.isoformat(sep='T')[:-3] + 'Z'
+    }
+    data.append(show_data)
+  
+  response = {
+    "count": len(data),
+    "data": data
+  }
+
+  return render_template('pages/show.html', results=response, search_term=search_term)
+
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('errors/404.html'), 404
