@@ -73,6 +73,9 @@ class Venue(db.Model):
     shows = db.relationship('Show', backref=db.backref('venue'), lazy=True, cascade='all, delete-orphan')
     genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy=True)
 
+    # bonus challenge
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -92,6 +95,9 @@ class Artist(db.Model):
     shows = db.relationship('Show', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan')
     genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy=True)
 
+    # bonus challenge
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
 # one-to-many relationship between (Parent->Show) and (Artist->Show)
 class Show(db.Model):
     __tablename__ = 'Show'
@@ -101,6 +107,9 @@ class Show(db.Model):
 
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
 
 # many-to-many relationship between (Parent-Genre) and (Artist-Genre) with Association Tables included above
 class Genre(db.Model):
@@ -128,7 +137,15 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-  return render_template('pages/home.html')
+  venues = Venue.query.all()
+  artists = Artist.query.all()
+
+  data = {
+    "venues": venues,
+    "artists": artists
+  }
+
+  return render_template('pages/home.html', data=data)
 
 
 #  Venues
