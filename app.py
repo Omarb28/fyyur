@@ -15,6 +15,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from pprint import PrettyPrinter
+import bleach
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -202,7 +203,7 @@ def search_venues():
   '''
   response = {}
 
-  search_term = request.form.get('search_term', '')
+  search_term = bleach.clean(request.form.get('search_term', ''))
   venues = Venue.query.filter(Venue.name.ilike('%' + search_term + '%')).all()
 
   data = []
@@ -447,7 +448,7 @@ def search_artists():
   '''
   response = {}
 
-  search_term = request.form.get('search_term', '')
+  search_term = bleach.clean(request.form.get('search_term', ''))
   artists = Artist.query.filter(Artist.name.ilike('%' + search_term + '%')).all()
 
   data = []
@@ -881,8 +882,8 @@ def create_show_submission():
 @app.route('/shows/search', methods=['POST'])
 def search_shows():
   response = {}
-
-  search_term = request.form.get('search_term', '')
+  
+  search_term = bleach.clean(request.form.get('search_term', ''))
   #shows = db.session.query(Show, Artist).join(Artist).filter(Artist.name.ilike('%' + search_term + '%')).all()
   shows = db.session.query(Show, Artist, Venue).join(Artist).join(Venue).filter(db.or_(Venue.name.ilike('%' + search_term + '%'),
                                                                                         Artist.name.ilike('%' + search_term + '%'))).all()
