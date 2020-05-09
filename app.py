@@ -142,12 +142,14 @@ def index():
   venues = Venue.query.order_by(db.desc('created_at')).limit(10).all()
   artists = Artist.query.order_by(db.desc('created_at')).limit(10).all()
 
+  now = datetime.utcnow()
+  
   data = {
     "venues": venues,
     "artists": artists
   }
 
-  return render_template('pages/home.html', data=data)
+  return render_template('pages/home.html', data=data, now=now)
 
 
 #  Venues

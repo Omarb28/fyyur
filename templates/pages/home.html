@@ -23,18 +23,49 @@
 	</div>
 	<div>
 		<p>.</p>
-		<p><b>Most Recently Listed Venues:</b></p>
-		<ul>
-			{% for venue in data.venues %}
-				<li>{{ venue.name }}</li>
-			{% endfor %}
-		</ul>
-		<p><b>Most Recently Listed Artists:</b></p>
-		<ul>
-			{% for artist in data.artists %}
-				<li>{{ artist.name }}</li>
-			{% endfor %}
-		</ul>
+		<hr />
+		<div class="container">
+			<div class="col-sm-6">
+				<h4><b>Most Recently Listed Venues:</b></h4>
+				<br />
+				<ul class="items">
+					{% for venue in data.venues %}
+						<li>
+							<a href="/venues/{{ venue.id }}">
+								<i class="fas fa-music"></i>
+								<div class="item">
+									<h5 style="display: inline;">{{ venue.name }}</h5>
+									<small style="margin-left: 5px; color: gray;">({{  moment(venue.created_at).fromNow()  }})</small>
+								</div>
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="col-sm-6">
+				<h4><b>Most Recently Listed Artists:</b></h4>
+				<br />
+				<ul class="items">
+					{% for artist in data.artists %}
+						<li>
+							<a href="/artists/{{ artist.id }}">
+								<i class="fas fa-users"></i>
+								<div class="item">
+									<h5 style="display: inline;">{{ artist.name }}</h5>
+									<small style="margin-left: 5px; color: gray;">({{  moment(artist.created_at).fromNow()  }})</small>
+								</div>
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
 	</div>
 </div>
+<script>
+	const moments = document.querySelectorAll(".flask-moment");
+	moments.forEach(function(m) {
+		m.style.display = "inline";
+	});
+</script>
 {% endblock %}
