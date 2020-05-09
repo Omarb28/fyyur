@@ -553,13 +553,22 @@ def artists():
   }]
   '''
   artists = Artist.query.all()
+
   data = []
-  for a in artists:
+  for artist in artists:
+
+    # bonus challenge: get all songs by artist
+    songs = db.session.query(Song).join(Album).filter(Song.album_id == Album.id).join(Artist).filter(Album.artist_id == artist.id).count()
+  
     artist_data = {
-      "id": a.id,
-      "name": a.name,
-      "image_link": a.image_link,
-      "shows": len(a.shows)
+      "id": artist.id,
+      "name": artist.name,
+      "image_link": artist.image_link,
+      "shows": len(artist.shows),
+      
+      # bonus challenge
+      "albums": len(artist.albums),
+      "songs": songs
     }
     data.append(artist_data)
 
@@ -647,8 +656,9 @@ def show_artist(artist_id):
     "upcoming_shows": upcoming_shows,
     "past_shows_count": len(past_shows),
     "upcoming_shows_count": len(upcoming_shows),
-    
-    "albums": artist.albums # bonus challenge
+
+    # bonus challenge
+    "albums": artist.albums 
   }
 
   button_links = {
