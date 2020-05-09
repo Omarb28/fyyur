@@ -1,5 +1,16 @@
 {% extends 'layouts/main.html' %}
 {% block title %}{{ artist.name }} | Artist{% endblock %}
+{% block styles %}
+	<style>
+		.album {
+			width: 15rem;
+			border: 1px solid black;
+			padding: 10px;
+			height: 170px; 
+			display: inline-block;
+		}
+	</style>
+{% endblock %}
 {% block content %}
 <div class="row">
 	<div class="col-sm-6">
@@ -32,6 +43,22 @@
 			<div class="col-sm-2" style="padding-left: 40px">
 				<button id="edit-venue" data-edit-link="{{ button_links.edit }}" class="btn btn-info" type="button" style="border-color: cornflowerblue; background: cornflowerblue;">Edit</button>
 				<button id="delete-venue" data-delete-link="{{ button_links.delete }}" class="btn btn-danger" type="button" >Delete</button>
+				<button id="show-albums" data-albums="" class="btn btn-info" style="margin: 5px; border-color: green; background: green;">Show Albums</button>
+			</div>
+		</div>
+		<div id="albums" style="display: none;">
+			<h4>Albums:</h4>
+			<div class="card album" style="width: 15rem; border: 1px solid black; padding: 10px; height: 170px; ; display: inline-block;">
+				<div class="card-body">
+					<h5 class="card-title"><b>Night Visions</b></h5>
+					<h6 class="card-subtitle mb-2 text-muted">3 Songs</h6>
+					<ul style="list-style-type:none; padding-left: 0;">
+						<li>1. Radioactive</li>
+						<li>2. Tiptoe</li>
+						<li>3. It's Time</li>
+						<p>and more...</p>
+					</ul>
+				</div>
 			</div>
 		</div>
 		{% if artist.seeking_venue %}
@@ -96,6 +123,21 @@
 		.then(function(data) {
 			location.href = '/';
 		});
+	};
+	const albumsButton = document.getElementById('show-albums');
+	const albums = document.getElementById('albums');
+	let showAlbums = false;
+	albumsButton.onclick = function(event) {
+		if (showAlbums) {
+			albums.style.display = "none";
+			albumsButton.innerText = 'Show Albums';
+			showAlbums = false;
+		}
+		else {
+			albums.style.display = "block";
+			albumsButton.innerText = 'Hide Albums';
+			showAlbums = true;
+		}
 	};
 </script>
 {% endblock %}
