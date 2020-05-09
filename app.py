@@ -539,7 +539,9 @@ def artists():
   for a in artists:
     artist_data = {
       "id": a.id,
-      "name": a.name
+      "name": a.name,
+      "image_link": a.image_link,
+      "shows": len(a.shows)
     }
     data.append(artist_data)
 

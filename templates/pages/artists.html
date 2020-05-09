@@ -1,16 +1,52 @@
 {% extends 'layouts/main.html' %}
 {% block title %}Fyyur | Artists{% endblock %}
+{% block styles %}
+	<style>
+		.image-crop {
+			overflow: hidden;
+			height: 110px;
+		}
+		a {
+			color: black;
+		}
+	</style>
+{% endblock %}
 {% block content %}
 <ul class="items">
 	{% for artist in artists %}
-	<li>
-		<a href="/artists/{{ artist.id }}">
-			<i class="fas fa-users"></i>
-			<div class="item">
-				<h5>{{ artist.name }}</h5>
-			</div>
-		</a>
-	</li>
+	<!--<li class="artist">
+		<div class="crop">
+			<img src="{{ artist.image_link }}" alt="Artist Image" />
+		</div>
+		<div class="yo">
+			<a href="/artists/{{ artist.id }}">
+				<i class="fas fa-users"></i>
+				<div class="item">
+					<h5></h5>
+				</div>
+			</a>
+		</div>
+	</li>-->
+	<div class="card mb-3" style="max-width: 540px; margin-top: 20px;">
+		<div class="row no-gutters">
+			<a href="/artists/{{ artist.id }}">
+				<div class="col-md-4 image-crop">
+					<img src="{{ artist.image_link }}" class="card-img" alt="...">
+				</div>
+				<div class="col-md-8">
+					<div class="card-body">
+						<h5 class="card-title">
+							<i class="fas fa-users"></i>
+							<b>{{ artist.name }}</b>
+						</h5>
+						<p class="card-text">Shows: {{ artist.shows }}</p>
+						<p class="card-text">Albums: 0</p>
+						<p class="card-text"><small>Songs: 0</small></p>
+					</div>
+				</div>
+			</a>
+		</div>
+	</div>
 	{% endfor %}
 </ul>
 {% endblock %}
