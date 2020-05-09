@@ -646,7 +646,9 @@ def show_artist(artist_id):
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
     "past_shows_count": len(past_shows),
-    "upcoming_shows_count": len(upcoming_shows)
+    "upcoming_shows_count": len(upcoming_shows),
+    
+    "albums": artist.albums # bonus challenge
   }
 
   button_links = {

@@ -3,13 +3,15 @@
 # Seed Data into Database
 #----------------------------------------------------------------------------#
 
-from app import db, Venue, Artist, Show, Genre
+from app import db, Venue, Artist, Show, Genre, Album, Song
 
 #  Reset Tables
 #  ----------------------------------------------------------------
 
 db.session.execute('DELETE FROM "VenueGenre";')
 db.session.execute('DELETE FROM "ArtistGenre";')
+Song.query.delete()
+Album.query.delete()
 Show.query.delete()
 Venue.query.delete()
 Artist.query.delete()
@@ -17,6 +19,8 @@ Genre.query.delete()
 db.session.execute('ALTER SEQUENCE "Venue_id_seq" RESTART WITH 1;')
 db.session.execute('ALTER SEQUENCE "Artist_id_seq" RESTART WITH 7;')
 db.session.execute('ALTER SEQUENCE "Show_id_seq" RESTART WITH 1;')
+db.session.execute('ALTER SEQUENCE "Album_id_seq" RESTART WITH 1;')
+db.session.execute('ALTER SEQUENCE "Song_id_seq" RESTART WITH 1;')
 db.session.commit()
 
 #  Venues
@@ -117,6 +121,59 @@ artists = Artist.query.all()
 artists[0].genres = get_genre_list(["Rock n Roll"])
 artists[1].genres = get_genre_list(["Jazz"])
 artists[2].genres = get_genre_list(["Jazz", "Classical"])
+
+#  Albums
+#  ----------------------------------------------------------------
+
+albums = (
+  {"artist_id": 4, "name": "Night Visions" },
+  {"artist_id": 5, "name": "Kamikaze" },
+  {"artist_id": 5, "name": "Hybrid Theory" },
+  {"artist_id": 6, "name": "Free Wired" },
+  {"artist_id": 6, "name": "Dreaming Out Loud" },
+  {"artist_id": 6, "name": "Viva la Vida" },
+)
+
+for a in albums:
+  album = Album(**a)
+  db.session.add(album)
+
+#  Songs
+#  ----------------------------------------------------------------
+
+songs = (
+  {"album_id": 1, "name": "Radioactive" },
+  {"album_id": 1, "name": "Demons" },
+  {"album_id": 1, "name": "On Top of the World" },
+  {"album_id": 1, "name": "Every Night" },
+
+  {"album_id": 2, "name": "Crawling" },
+  {"album_id": 2, "name": "One Step Closer" },
+  {"album_id": 2, "name": "With You" },
+  {"album_id": 2, "name": "In the End" },
+
+  {"album_id": 3, "name": "The Ringer" },
+  {"album_id": 3, "name": "Greatest" },
+  {"album_id": 3, "name": "Stepping Stone" },
+
+  {"album_id": 4, "name": "Stop and Stare" },
+  {"album_id": 4, "name": "Apologize" },
+  {"album_id": 4, "name": "All Fall Down" },
+  {"album_id": 4, "name": "Come Home" },
+
+  {"album_id": 5, "name": "Don't Look Now" },
+  {"album_id": 5, "name": "Rocketeer" },
+
+  {"album_id": 6, "name": "Life in Technicolor" },
+  {"album_id": 6, "name": "Cemeteries of London" },
+  {"album_id": 6, "name": "Viva la Vida" },
+)
+
+for s in songs:
+  song = Song(**s)
+  db.session.add(song)
+
+
 
 db.session.commit()
 db.session.close()
