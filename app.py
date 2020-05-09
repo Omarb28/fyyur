@@ -96,8 +96,9 @@ class Artist(db.Model):
     shows = db.relationship('Show', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan')
     genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy=True)
 
-    # bonus challenge (list by most recent)
+    # bonus challenge (list by most recent + albums and songs)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    albums = db.relationship('Album', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan')
 
 # DONE Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
@@ -120,6 +121,23 @@ class Genre(db.Model):
     __tablename__ = 'Genre'
 
     genre = db.Column(db.String(120), primary_key=True)
+
+# extra models for bonus challenge
+class Album(db.Model):
+    __tablename__ = 'Album'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+    songs = db.relationship('Song', backref=db.backref('album'), lazy=True, cascade='all, delete-orphan')
+
+class Song(db.Model):
+    __tablename__ = 'Song'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+    album_id = db.Column(db.Integer, db.ForeignKey('Album.id'))
 
 #----------------------------------------------------------------------------#
 # Filters.
