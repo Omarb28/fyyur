@@ -1,4 +1,4 @@
-"""empty message
+"""Added models for Albums and Songs for a bonus challenge
 
 Revision ID: 6bbf3c60e078
 Revises: b0698a08afd2

@@ -55,50 +55,50 @@ class Venue(db.Model):
     __tablename__ = 'Venue'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
+    address = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
     # DONE: implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(120))
-    seeking_talent = db.Column(db.Boolean, default=False)
+    seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(240))
 
     # backref foreign keys
-    shows = db.relationship('Show', backref=db.backref('venue'), lazy=True, cascade='all, delete-orphan')
-    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy=True)
+    shows = db.relationship('Show', backref=db.backref('venue'), cascade='all, delete-orphan', lazy='joined')
+    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy='joined')
 
     # bonus challenge (list by most recent)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
     # DONE: implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(120))
-    seeking_venue = db.Column(db.Boolean, default=False)
+    seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(240))
 
     # backref foreign keys
-    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan')
-    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy=True)
+    shows = db.relationship('Show', backref=db.backref('artist'), cascade='all, delete-orphan',  lazy='joined')
+    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy='joined')
 
     # bonus challenge (list by most recent + albums and songs)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    albums = db.relationship('Album', backref=db.backref('artist'), lazy=True, cascade='all, delete-orphan')
+    albums = db.relationship('Album', backref=db.backref('artist'), cascade='all, delete-orphan', lazy='joined')
 
 # DONE Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
@@ -107,13 +107,13 @@ class Show(db.Model):
     __tablename__ = 'Show'
 
     id = db.Column(db.Integer, primary_key=True)
-    start_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # foreign keys
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
 
 # many-to-many relationship between (Parent-Genre) and (Artist-Genre) with Association Tables included above
@@ -127,16 +127,16 @@ class Album(db.Model):
     __tablename__ = 'Album'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
+    name = db.Column(db.String(120), nullable=False)
 
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
-    songs = db.relationship('Song', backref=db.backref('album'), lazy=True, cascade='all, delete-orphan')
+    songs = db.relationship('Song', backref=db.backref('album'), cascade='all, delete-orphan', lazy='joined')
 
 class Song(db.Model):
     __tablename__ = 'Song'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
+    name = db.Column(db.String(120), nullable=False)
     album_id = db.Column(db.Integer, db.ForeignKey('Album.id'))
 
 #----------------------------------------------------------------------------#
