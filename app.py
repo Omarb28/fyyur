@@ -69,8 +69,8 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(240))
 
     # backref foreign keys
-    shows = db.relationship('Show', backref=db.backref('venue'), cascade='all, delete-orphan', lazy='joined')
-    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy='joined')
+    shows = db.relationship('Show', backref=db.backref('venue'), cascade='all, delete-orphan', lazy='select')
+    genres = db.relationship('Genre', secondary=venue_genres, backref=db.backref('venues'), lazy='select')
 
     # bonus challenge (list by most recent)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -93,12 +93,12 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(240))
 
     # backref foreign keys
-    shows = db.relationship('Show', backref=db.backref('artist'), cascade='all, delete-orphan',  lazy='joined')
-    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy='joined')
+    shows = db.relationship('Show', backref=db.backref('artist'), cascade='all, delete-orphan',  lazy='select')
+    genres = db.relationship('Genre', secondary=artist_genres, backref=db.backref('artists'), lazy='select')
 
     # bonus challenge (list by most recent + albums and songs)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    albums = db.relationship('Album', backref=db.backref('artist'), cascade='all, delete-orphan', lazy='joined')
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    albums = db.relationship('Album', backref=db.backref('artist'), cascade='all, delete-orphan', lazy='select')
 
 # DONE Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
@@ -130,7 +130,7 @@ class Album(db.Model):
     name = db.Column(db.String(120), nullable=False)
 
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
-    songs = db.relationship('Song', backref=db.backref('album'), cascade='all, delete-orphan', lazy='joined')
+    songs = db.relationship('Song', backref=db.backref('album'), cascade='all, delete-orphan', lazy='select')
 
 class Song(db.Model):
     __tablename__ = 'Song'
