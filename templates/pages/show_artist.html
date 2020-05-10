@@ -62,7 +62,7 @@
 				<div class="card album" style="margin-top: 0;">
 					<div class="card-body">
 						<h5 class="card-title"><b>{{ album.name }}</b></h5>
-						<h6 class="card-subtitle mb-2 text-muted">3 Songs</h6>
+						<h6 class="card-subtitle mb-2 text-muted">{{ album.songs | length }} Songs</h6>
 						<ul style="list-style-type:none; padding-left: 0;">
 							{% for song in album.songs %}
 								<li>{{ loop.index }}. {{ song.name }}</li>
